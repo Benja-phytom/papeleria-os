@@ -1,0 +1,541 @@
+<!-- ESTILOS AVANZADOS Y ANIMACIONES (CSS) -->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+
+  :root {
+    --bg-dark: #090d16;
+    --card-bg: rgba(22, 30, 46, 0.85);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --primary: #3b82f6;
+    --primary-glow: rgba(59, 130, 246, 0.35);
+    --accent: #06b6d4;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+  body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 20px;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.12) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.08) 0px, transparent 50%);
+    overflow-x: hidden;
+  }
+
+  /* PANTALLA DE CARGA / BOOTING */
+  #boot-screen {
+    position: fixed; inset: 0; background: #04070d; z-index: 9999;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 30px; font-family: 'JetBrains Mono', monospace;
+  }
+  .boot-terminal {
+    width: 100%; max-width: 650px; background: #000; border: 1px solid #1e293b;
+    border-radius: 12px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+  }
+  .boot-line { color: #10b981; font-size: 0.85rem; margin-bottom: 8px; opacity: 0; animation: fadeIn 0.1s forwards; }
+  .boot-progress-bar { width: 100%; height: 6px; background: #1e293b; border-radius: 3px; overflow: hidden; margin-top: 20px; }
+  .boot-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #3b82f6, #06b6d4); transition: width 0.1s linear; }
+
+  /* HEADER */
+  .header {
+    max-width: 1300px; margin: 0 auto 20px auto; display: flex; justify-content: space-between; align-items: center;
+    background: var(--card-bg); backdrop-filter: blur(12px); padding: 16px 28px; border-radius: 16px;
+    border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+  .logo-box { display: flex; align-items: center; gap: 14px; }
+  .logo-icon {
+    width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    box-shadow: 0 0 20px var(--primary-glow);
+  }
+  .status-tag {
+    background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--success);
+    font-size: 0.8rem; font-weight: 700; padding: 6px 14px; border-radius: 30px; display: flex; align-items: center; gap: 8px;
+  }
+  .pulse-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; animation: pulse 1.5s infinite; }
+
+  /* MAIN LAYOUT */
+  .container { max-width: 1300px; margin: 0 auto; }
+  .hidden { display: none !important; }
+
+  .card {
+    background: var(--card-bg); backdrop-filter: blur(12px); border-radius: 16px; padding: 22px;
+    border: 1px solid var(--border-color); margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  }
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .card-title { font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; gap: 10px; color: #fff; }
+
+  /* LOGIN FORM */
+  .login-card { max-width: 420px; margin: 60px auto; text-align: center; }
+  .form-group { margin-bottom: 16px; text-align: left; }
+  .form-group label { font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; display: block; }
+  .input-field {
+    width: 100%; padding: 12px 16px; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-color);
+    border-radius: 10px; color: #fff; font-size: 0.95rem; outline: none; transition: all 0.2s;
+  }
+  .input-field:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+
+  .btn {
+    width: 100%; padding: 13px; border: none; border-radius: 10px; font-weight: 700; font-size: 0.95rem;
+    cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; box-shadow: 0 4px 15px var(--primary-glow); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--primary-glow); }
+  .btn-success { background: linear-gradient(135deg, var(--success), #059669); color: white; }
+  .btn-success:hover { transform: translateY(-2px); }
+
+  /* DASHBOARD GRID */
+  .dashboard-grid { display: grid; grid-template-columns: 2.3fr 1fr; gap: 20px; }
+
+  /* CATALOGO DE PRODUCTOS Y BÚSQUEDA */
+  .search-bar { display: flex; gap: 10px; margin-bottom: 16px; }
+  .category-pills { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 5px; }
+  .pill {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-secondary);
+    padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: 0.2s;
+  }
+  .pill.active, .pill:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+  .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; max-height: 480px; overflow-y: auto; padding-right: 5px; }
+  .product-card {
+    background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color); padding: 14px; border-radius: 12px;
+    cursor: pointer; transition: all 0.2s; position: relative; display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .product-card:hover { border-color: var(--primary); transform: translateY(-3px); background: rgba(30, 41, 59, 0.8); }
+  .prod-name { font-size: 0.88rem; font-weight: 700; margin-bottom: 6px; color: #f1f5f9; }
+  .prod-badge { font-size: 0.7rem; color: var(--accent); background: rgba(6, 182, 212, 0.1); padding: 2px 8px; border-radius: 6px; width: fit-content; margin-bottom: 8px; }
+  .prod-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .prod-price { font-size: 1.05rem; font-weight: 800; color: var(--success); }
+  .prod-stock { font-size: 0.72rem; color: var(--text-secondary); }
+
+  /* TICKET Y POS */
+  .cart-container { background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; max-height: 250px; overflow-y: auto; margin-bottom: 15px; }
+  .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--border-color); font-size: 0.85rem; }
+  .cart-item:last-child { border-bottom: none; }
+  .delete-btn { color: var(--danger); background: none; border: none; cursor: pointer; font-size: 0.9rem; padding: 2px 6px; }
+
+  .summary-row { display: flex; justify-content: space-between; font-weight: 700; font-size: 1.2rem; margin: 12px 0; color: #fff; }
+
+  /* TELEMETRÍA Y HARDWARE */
+  .telemetry-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px; }
+  .tele-box { background: rgba(15, 23, 42, 0.8); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); text-align: center; }
+  .tele-label { font-size: 0.72rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; }
+  .tele-val { font-size: 1.15rem; font-weight: 800; color: var(--accent); margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
+
+  .spooler-box { margin-top: 15px; background: rgba(15, 23, 42, 0.8); padding: 14px; border-radius: 10px; border: 1px solid var(--border-color); }
+  .progress-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+  .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.2s ease; }
+
+  /* ANIMACIONES */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+</style>
+
+<!-- PANTALLA DE CARGA DEL SISTEMA OPERATIVO (BOOT) -->
+<div id="boot-screen" class="hidden">
+  <div class="boot-terminal">
+    <div id="boot-logs"></div>
+    <div class="boot-progress-bar">
+      <div id="boot-progress" class="boot-progress-fill"></div>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER / BARRA DE ESTADO -->
+<header class="header">
+  <div class="logo-box">
+    <div class="logo-icon">💻</div>
+    <div>
+      <h1 style="font-size: 1.1rem; font-weight: 800; letter-spacing: -0.5px;">SISTEMA OPERATIVO - PAPELERÍA COPY PUEBLA</h1>
+      <span style="font-size: 0.75rem; color: var(--text-secondary);">Windows 11 Pro Enterprise | Kernel 10.0.22631</span>
+    </div>
+  </div>
+  <div id="user-status-tag" class="status-tag">
+    <div class="pulse-dot"></div>
+    <span id="user-display-text">Estado: Esperando Login</span>
+  </div>
+</header>
+
+<main class="container">
+  <!-- MÓDULO 1: INICIO DE SESIÓN -->
+  <section id="login-module" class="card login-card">
+    <div style="font-size: 2.5rem; margin-bottom: 10px;">🔐</div>
+    <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 6px;">Autenticación de Operador</h2>
+    <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 20px;">Control de acceso restringido para personal autorizado.</p>
+    
+    <form id="login-form">
+      <div class="form-group">
+        <label>Usuario Operador</label>
+        <input type="text" id="user" class="input-field" placeholder="Ej. Benjamin" required>
+      </div>
+      <div class="form-group">
+        <label>Contraseña del Sistema</label>
+        <input type="password" id="pass" class="input-field" placeholder="••••••••" required>
+      </div>
+      <div class="form-group">
+        <label>Perfil de Usuario (Rol)</label>
+        <select id="role" class="input-field">
+          <option>Encargado de Ventas / Cajero (18 - 50 años)</option>
+          <option>Administrador de Inventario</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">🚀 Iniciar Sistema & Cargar Kernel</button>
+    </form>
+  </section>
+
+  <!-- MÓDULO 2: DASHBOARD INTERACTIVO COMPLETO -->
+  <div id="main-dashboard" class="dashboard-grid hidden">
+    
+    <!-- COLUMNA IZQUIERDA: PRODUCTOS Y RECURSOS -->
+    <div>
+      <section class="card">
+        <div class="card-header">
+          <div class="card-title">📦 Catálogo de Productos e Impresiones</div>
+          <span style="font-size: 0.75rem; color: var(--accent); font-weight: 700;" id="total-items-badge">12 Productos disponibles</span>
+        </div>
+
+        <!-- Buscador y Filtros por Categoría -->
+        <div class="search-bar">
+          <input type="text" id="search-input" class="input-field" placeholder="🔍 Buscar producto, servicio o trámite...">
+        </div>
+        <div class="category-pills">
+          <button class="pill active" onclick="filterCategory('todos')">Todos</button>
+          <button class="pill" onclick="filterCategory('Servicios')">Servicios / Copias</button>
+          <button class="pill" onclick="filterCategory('Papelería')">Papelería</button>
+          <button class="pill" onclick="filterCategory('Cómputo')">Cómputo & USB</button>
+        </div>
+
+        <!-- Grid de Productos -->
+        <div id="products-grid" class="products-grid"></div>
+      </section>
+
+      <!-- MONITOR DE HARDWARE & SISTEMA OPERATIVO -->
+      <section class="card">
+        <div class="card-title">⚡ Telemetría de Hardware & Multitarea (SO)</div>
+        <div class="telemetry-grid">
+          <div class="tele-box">
+            <div class="tele-label">CPU (Intel Core i3)</div>
+            <div class="tele-val" id="cpu-telemetry">12%</div>
+          </div>
+          <div class="tele-box">
+            <div class="tele-label">RAM (8 GB DDR4)</div>
+            <div class="tele-val" id="ram-telemetry">2.8 GB</div>
+          </div>
+          <div class="tele-box">
+            <div class="tele-label">SSD (240 GB)</div>
+            <div class="tele-val">42 MB/s</div>
+          </div>
+        </div>
+
+        <!-- Spooler de Impresión -->
+        <div class="spooler-box">
+          <div style="display:flex; justify-content:space-between; font-size:0.82rem; font-weight:700;">
+            <span>🖨️ Buffer / Cola de Impresión Multifuncional</span>
+            <span id="spooler-status-text" style="color: var(--text-secondary);">En espera...</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div id="spooler-bar-fill" class="progress-bar-fill"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- COLUMNA DERECHA: PUNTO DE VENTA Y COBRO -->
+    <div>
+      <section class="card">
+        <div class="card-title">🧾 Caja & Ticket de Venta</div>
+        
+        <div class="cart-container">
+          <div id="cart-items-list">
+            <p style="color: var(--text-secondary); font-size:0.82rem; text-align:center; padding: 40px 0;">El carrito está vacío</p>
+          </div>
+        </div>
+
+        <div class="summary-row">
+          <span>Total a Cobrar:</span>
+          <span style="color: var(--success);">$<span id="total-val">0.00</span> MXN</span>
+        </div>
+
+        <div class="form-group">
+          <label>Efectivo Recibido</label>
+          <input type="number" id="cash-given" class="input-field" placeholder="$0.00" style="font-size: 1.1rem; font-weight: 700;">
+        </div>
+
+        <div style="display:flex; justify-content:space-between; font-size:0.9rem; font-weight:700; margin-bottom: 18px;">
+          <span style="color: var(--text-secondary);">Cambio a entregar:</span>
+          <span style="color: var(--accent); font-size: 1.1rem;">$<span id="change-val">0.00</span></span>
+        </div>
+
+        <button id="btn-process-sale" class="btn btn-success">🛒 Cobrar, Guardar e Imprimir Ticket</button>
+      </section>
+    </div>
+
+  </div>
+</main>
+
+<!-- LÓGICA DE PROGRAMACIÓN COMPLETA (JS) -->
+<script>
+  // 1. BASE DE DATOS EXTENDIDA DE PRODUCTOS
+  const productsDB = [
+    { id: 1, name: "Fotocopia B/N Carta", price: 1.00, category: "Servicios", stock: 1000 },
+    { id: 2, name: "Impresión Color HP", price: 5.00, category: "Servicios", stock: 500 },
+    { id: 3, name: "Escaneo Documento PDF", price: 8.00, category: "Servicios", stock: 200 },
+    { id: 4, name: "Engargolado Espiral", price: 25.00, category: "Servicios", stock: 50 },
+    { id: 5, name: "Enmicado Credencial", price: 15.00, category: "Servicios", stock: 80 },
+    { id: 6, name: "Cuaderno Profesional 100h", price: 38.00, category: "Papelería", stock: 45 },
+    { id: 7, name: "Bolígrafo Gel Punto Fino", price: 8.50, category: "Papelería", stock: 120 },
+    { id: 8, name: "Juego de Geometría", price: 45.00, category: "Papelería", stock: 25 },
+    { id: 9, name: "Paquete Hojas Blancas (100h)", price: 35.00, category: "Papelería", stock: 30 },
+    { id: 10, name: "Memoria USB 32GB Kingston", price: 120.00, category: "Cómputo", stock: 15 },
+    { id: 11, name: "Cable USB a USB-C", price: 85.00, category: "Cómputo", stock: 10 },
+    { id: 12, name: "Mouse Óptico USB", price: 95.00, category: "Cómputo", stock: 8 }
+  ];
+
+  let cart = [];
+  let currentCategory = 'todos';
+
+  // SECUENCIA DE CARGA DEL SISTEMA OPERATIVO (BOOTING ANIMATION)
+  const bootLogs = [
+    "POST: Checking Hardware Architecture... Intel Core i3 @ 3.60GHz OK",
+    "RAM Check: 8192 MB DDR4 Single-Channel OK",
+    "Storage: NVMe SSD 240GB - Health 99% OK",
+    "Kernel: Windows 11 Enterprise Kernel loaded at 0x80000000",
+    "Drivers: Loading Multifunctional USB Printer Drivers [Epson/HP]...",
+    "Network: Local IP assigned 192.168.1.45 (Fast Ethernet)",
+    "Security: Access Control Module Initialized.",
+    "System Ready! Launching POS Web Application..."
+  ];
+
+  window.addEventListener('DOMContentLoaded', () => {
+    // FORMULARIO DE LOGIN
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const user = document.getElementById('user').value.trim();
+      const pass = document.getElementById('pass').value.trim();
+      const role = document.getElementById('role').value;
+
+      if (user === "Benjamin" && pass === "040726") {
+        runBootSequence(user, role);
+      } else {
+        alert("❌ ACCESO DENEGADO: Credenciales incorrectas. Verifique usuario y contraseña.");
+      }
+    });
+
+    // BUSCADOR Y FILTROS
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      renderProducts(e.target.value.toLowerCase());
+    });
+
+    document.getElementById('cash-given').addEventListener('input', calculateChange);
+    document.getElementById('btn-process-sale').addEventListener('click', processSale);
+  });
+
+  // ANIMACIÓN DE ARRANQUE DEL SO
+  function runBootSequence(user, role) {
+    document.getElementById('login-module').classList.add('hidden');
+    const bootScreen = document.getElementById('boot-screen');
+    const logsContainer = document.getElementById('boot-logs');
+    const progressBar = document.getElementById('boot-progress');
+    
+    bootScreen.classList.remove('hidden');
+    logsContainer.innerHTML = "";
+
+    let step = 0;
+    const interval = setInterval(() => {
+      if (step < bootLogs.length) {
+        const p = document.createElement('div');
+        p.className = 'boot-line';
+        p.textContent = `> ${bootLogs[step]}`;
+        logsContainer.appendChild(p);
+        
+        const progress = ((step + 1) / bootLogs.length) * 100;
+        progressBar.style.width = `${progress}%`;
+        step++;
+      } else {
+        clearInterval(interval);
+        setTimeout(() => {
+          bootScreen.classList.add('hidden');
+          document.getElementById('main-dashboard').classList.remove('hidden');
+          document.getElementById('user-display-text').textContent = `Operador: ${user} | Rol: ${role}`;
+          renderProducts();
+          startTelemetry();
+        }, 500);
+      }
+    }, 280);
+  }
+
+  // RENDERIZADO DE PRODUCTOS
+  function renderProducts(filterText = "") {
+    const grid = document.getElementById('products-grid');
+    grid.innerHTML = "";
+
+    const filtered = productsDB.filter(p => {
+      const matchCat = currentCategory === 'todos' || p.category === currentCategory;
+      const matchSearch = p.name.toLowerCase().includes(filterText);
+      return matchCat && matchSearch;
+    });
+
+    document.getElementById('total-items-badge').textContent = `${filtered.length} Productos mostrados`;
+
+    filtered.forEach(p => {
+      const card = document.createElement('div');
+      card.className = "product-card";
+      card.onclick = () => addToCart(p.id);
+      card.innerHTML = `
+        <div>
+          <span class="prod-badge">${p.category}</span>
+          <div class="prod-name">${p.name}</div>
+        </div>
+        <div class="prod-footer">
+          <span class="prod-price">$${p.price.toFixed(2)}</span>
+          <span class="prod-stock">Stock: ${p.stock}</span>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function filterCategory(cat) {
+    currentCategory = cat;
+    document.querySelectorAll('.pill').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    renderProducts(document.getElementById('search-input').value.toLowerCase());
+  }
+
+  // CARRITO Y OPERACIONES
+  function addToCart(id) {
+    const prod = productsDB.find(p => p.id === id);
+    if (prod.stock <= 0) {
+      alert("❌ Producto sin stock disponible.");
+      return;
+    }
+
+    prod.stock--;
+    cart.push(prod);
+    renderProducts(document.getElementById('search-input').value.toLowerCase());
+    updateCartUI();
+  }
+
+  function removeFromCart(index) {
+    const item = cart[index];
+    item.stock++;
+    cart.splice(index, 1);
+    renderProducts(document.getElementById('search-input').value.toLowerCase());
+    updateCartUI();
+  }
+
+  function updateCartUI() {
+    const list = document.getElementById('cart-items-list');
+    if (cart.length === 0) {
+      list.innerHTML = `<p style="color: var(--text-secondary); font-size:0.82rem; text-align:center; padding: 40px 0;">El carrito está vacío</p>`;
+      document.getElementById('total-val').textContent = "0.00";
+      calculateChange();
+      return;
+    }
+
+    list.innerHTML = "";
+    let total = 0;
+
+    cart.forEach((item, idx) => {
+      total += item.price;
+      const row = document.createElement('div');
+      row.className = 'cart-item';
+      row.innerHTML = `
+        <span>${item.name}</span>
+        <div>
+          <strong style="color:var(--success); margin-right:8px;">$${item.price.toFixed(2)}</strong>
+          <button class="delete-btn" onclick="removeFromCart(${idx})">🗑️</button>
+        </div>
+      `;
+      list.appendChild(row);
+    });
+
+    document.getElementById('total-val').textContent = total.toFixed(2);
+    calculateChange();
+  }
+
+  function calculateChange() {
+    const total = cart.reduce((acc, i) => acc + i.price, 0);
+    const cash = parseFloat(document.getElementById('cash-given').value) || 0;
+    const change = cash - total;
+    const changeElem = document.getElementById('change-val');
+
+    if (change >= 0) {
+      changeElem.textContent = change.toFixed(2);
+      changeElem.style.color = "var(--accent)";
+    } else {
+      changeElem.textContent = "0.00 (Falta efectivo)";
+      changeElem.style.color = "var(--danger)";
+    }
+  }
+
+  // SIMULACIÓN DE PROCESAMIENTO DE VENTA E IMPRESIÓN
+  function processSale() {
+    const total = cart.reduce((acc, i) => acc + i.price, 0);
+    const cash = parseFloat(document.getElementById('cash-given').value) || 0;
+
+    if (cart.length === 0) {
+      alert("⚠️ No hay productos en el carrito.");
+      return;
+    }
+    if (cash < total) {
+      alert("⚠️ El monto entregado es menor al total a cobrar.");
+      return;
+    }
+
+    // Efectos de procesamiento en el SO
+    const spoolerText = document.getElementById('spooler-status-text');
+    const spoolerBar = document.getElementById('spooler-bar-fill');
+    const cpuElem = document.getElementById('cpu-telemetry');
+    const ramElem = document.getElementById('ram-telemetry');
+
+    spoolerText.textContent = "⚙️ SO: Procesando spooler y enviando orden a impresora...";
+    spoolerText.style.color = "var(--warning)";
+    cpuElem.textContent = "84%";
+    ramElem.textContent = "5.8 GB";
+
+    let prog = 0;
+    const timer = setInterval(() => {
+      prog += 20;
+      spoolerBar.style.width = `${prog}%`;
+
+      if (prog >= 100) {
+        clearInterval(timer);
+        spoolerText.textContent = "✅ Imprimiendo comprobante de venta...";
+        spoolerText.style.color = "var(--success)";
+
+        alert(`✅ VENTA EXITOSA\n\nTotal: $${total.toFixed(2)} MXN\nCambio: $${(cash - total).toFixed(2)} MXN\n\n¡Ticket enviado a la Impresora Multifuncional!`);
+
+        // Reset
+        cart = [];
+        document.getElementById('cash-given').value = "";
+        updateCartUI();
+
+        setTimeout(() => {
+          spoolerBar.style.width = "0%";
+          spoolerText.textContent = "En espera...";
+          spoolerText.style.color = "var(--text-secondary)";
+          cpuElem.textContent = "12%";
+          ramElem.textContent = "2.8 GB";
+        }, 2000);
+      }
+    }, 250);
+  }
+
+  // TELEMETRÍA EN TIEMPO REAL
+  function startTelemetry() {
+    setInterval(() => {
+      if (cart.length === 0) {
+        const randomCpu = Math.floor(Math.random() * 8) + 10;
+        document.getElementById('cpu-telemetry').textContent = `${randomCpu}%`;
+      }
+    }, 2000);
+  }
+</script>
